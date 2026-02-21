@@ -1,0 +1,10 @@
+#EXTM3U
+
+#EXTINF:-1 tvg-name="Canale 1" group-title="Sport", Cosenza Channel 1
+http://vpn.streamhut.xyz/live/eeb3da587e/88bc3c692d/1917692.ts
+
+#EXTINF:-1 tvg-name="Canale 2" group-title="Sport", Sport 2
+INSERISCI_QUI_IL_SECONDO_LINK.ts
+
+#EXTINF:-1 tvg-name="Canale 3" group-title="Sport", Sport 3
+INSERISCI_QUI_IL_TERZO_LINK.ts
