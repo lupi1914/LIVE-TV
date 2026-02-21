@@ -1,1 +1,97 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Sports TV</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        body { background-color: #000; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 20px; text-align: center; }
+        h1 { color: #e50914; margin-bottom: 20px; text-transform: uppercase; }
+        .video-container { max-width: 800px; margin: 0 auto; background: #111; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(229,9,20,0.3); }
+        video { width: 100%; height: auto; aspect-ratio: 16/9; display: block; background: #000; }
+        .channel-list { margin-top: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
+        button { background-color: #333; color: white; border: 2px solid #555; padding: 12px 24px; font-size: 16px; border-radius: 5px; cursor: pointer; transition: 0.3s; font-weight: bold; }
+        button:hover, button.active { background-color: #e50914; border-color: #e50914; }
+    </style>
+</head>
+<body>
 
+    <h1>Forza Lupi TV</h1>
+
+    <div class="video-container">
+        <video id="videoPlayer" controls autoplay></video>
+    </div>
+
+    <div class="channel-list" id="channelButtons">
+        <p>Caricamento canali in corso...</p>
+    </div>
+
+    <script>
+        const video = document.getElementById('videoPlayer');
+        let hls;
+
+        // Funzione per avviare il video
+        function cambiaCanale(url, bottone) {
+            if (!url || url === "") {
+                alert("Nessun link disponibile per questo canale.");
+                return;
+            }
+
+            // Evidenzia il bottone attivo
+            document.querySelectorAll('.channel-list button').forEach(btn => btn.classList.remove('active'));
+            if(bottone) bottone.classList.add('active');
+
+            // Logica di riproduzione
+            if (Hls.isSupported()) {
+                if (hls) hls.destroy();
+                hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() { video.play(); });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                // Supporto nativo (iPhone/Safari)
+                video.src = url;
+                video.addEventListener('loadedmetadata', function() { video.play(); });
+            } else {
+                alert("Il tuo dispositivo non supporta questo formato video.");
+            }
+        }
+
+        // Funzione per leggere i link da GitHub
+        async function caricaCanali() {
+            try {
+                // Aggiungiamo la data corrente per evitare che la TV memorizzi i link vecchi
+                const noCacheUrl = 'canali.json?t=' + new Date().getTime();
+                const response = await fetch(noCacheUrl);
+                const dati = await response.json();
+                
+                const container = document.getElementById('channelButtons');
+                container.innerHTML = ''; // Pulisce la scritta "Caricamento"
+
+                const canali = [dati.canale1, dati.canale2, dati.canale3];
+                let primoCanaleAvviato = false;
+
+                canali.forEach(canale => {
+                    const btn = document.createElement('button');
+                    btn.textContent = canale.nome;
+                    btn.onclick = function() { cambiaCanale(canale.url, this); };
+                    container.appendChild(btn);
+
+                    // Avvia il primo canale se non è ancora partito nulla
+                    if (!primoCanaleAvviato && canale.url !== "INSERISCI_QUI_IL_LINK_1.m3u8") {
+                        cambiaCanale(canale.url, btn);
+                        primoCanaleAvviato = true;
+                    }
+                });
+            } catch (error) {
+                console.error("Errore di rete:", error);
+                document.getElementById('channelButtons').innerHTML = "<p>Errore nel caricamento dei canali. Riprova più tardi.</p>";
+            }
+        }
+
+        // Fai partire il tutto all'apertura della pagina
+        caricaCanali();
+    </script>
+</body>
+</html>
