@@ -1,0 +1,14 @@
+{
+  "canale1": {
+    "nome": "DAZN",
+    "url": "https://vpn.streamhut.xyz/live/eeb3da587e/88bc3c692d/1917692.m3u8"
+  },
+  "canale2": {
+    "nome": "SKY SPORT CALCIO",
+    "url": "https://vpn.streamhut.xyz/live/eeb3da587e/88bc3c692d/691261.m3u8"
+  },
+  "canale3": {
+    "nome": "Canale Sport 3",
+    "url": "INSERISCI_QUI_IL_LINK_3.m3u8"
+  }
+}
